@@ -1,5 +1,7 @@
-// TODO: - fill the missing parts
-//       - write Makefile with 'shell' executable as a target
+/* Maman_12
+ * Student : Bar Beker
+ * ID      : 311950943)
+ */
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -320,13 +322,10 @@ int runCommand(struct job newJob, struct jobSet * jobList,
                     strerror(errno));
         return 0;
     } else if (!strcmp(newJob.progs[0].argv[0], "jobs")) {
-        // FILL IN HERE
-        // Scan the job list and print jobs' status
-	// using the following function 
-        //    printf(JOB_STATUS_FORMAT, job->jobId, statusString,
-        //            job->text);
- 	// while statusString is one of the {Stopped, Running}
-
+        for (job = jobList->head; job; job = job->next) {
+            statusString = job->runningProgs ? "Running" : "Stopped";
+            printf(JOB_STATUS_FORMAT, job->jobId, statusString, job->text);
+        }
         return 0;
     } else if (!strcmp(newJob.progs[0].argv[0], "fg") ||
                !strcmp(newJob.progs[0].argv[0], "bg")) {
