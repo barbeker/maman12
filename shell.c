@@ -48,6 +48,18 @@ struct job {
     int stoppedProgs;       /* number of programs alive, but stopped */
 };
 
+
+struct job* GetJobByJobId(int _jobId, struct jobSet _jobSet) {
+    struct job* _job = NULL;
+    for (struct job* jobIter = _jobSet->head; jobIter; jobIter = jobIter->next) {
+        if (jobIter->jobId == _jobId) {
+            _job = jobIter;
+            break;
+        }
+    }
+    return _job;
+}
+
 void freeJob(struct job * cmd) {
     int i;
 
@@ -330,15 +342,15 @@ int runCommand(struct job newJob, struct jobSet * jobList,
     } else if (!strcmp(newJob.progs[0].argv[0], "fg") ||
                !strcmp(newJob.progs[0].argv[0], "bg")) {
  
-         // FILL IN HERE
+        // FILL IN HERE
         // First of all do some syntax checking.
         // If the syntax check fails return 1
         if (!IsSyntaxValid(newJob.progs[0].argv[1])) { return 1; }
 
         // else find the job in the job list
-        char* jobIdxStr = newJob.progs[0].argv[1] + 1;
-        jobNum = atoi(jobIdxStr);
-        job = GetJobFromJobId(jobNum ,jobList);
+        char* jobIdStr = newJob.progs[0].argv[1] + 1;
+        jobNum = atoi(jobIdStr);
+        job = GetJobByJobId(jobNum ,jobList);
 
         // If job not found return 1
         if (!job) { return 1; }
