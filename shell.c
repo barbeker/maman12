@@ -349,7 +349,7 @@ int runCommand(struct job newJob, struct jobSet * jobList,
         return 0;
     } else if (!strcmp(newJob.progs[0].argv[0], "jobs")) {
         for (job = jobList->head; job; job = job->next) {
-            statusString = job->runningProgs ? "Running" : "Stopped";
+            statusString = job->stoppedProgs ? "Stopped" : "Running";
             printf(JOB_STATUS_FORMAT, job->jobId, statusString, job->text);
         }
         return 0;
