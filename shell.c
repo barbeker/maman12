@@ -200,7 +200,7 @@ int parseCommand(char ** commandPtr, struct job * job, int * isBg) {
                 if ((argc + 1) == argvAlloced) {
                     argvAlloced += 5;
                     prog->argv = realloc(prog->argv, 
-				    sizeof(*prog->argv) * argvAlloced);
+                    sizeof(*prog->argv) * argvAlloced);
                 }
                 prog->argv[argc] = buf;
 
@@ -331,16 +331,37 @@ int runCommand(struct job newJob, struct jobSet * jobList,
                !strcmp(newJob.progs[0].argv[0], "bg")) {
  
          // FILL IN HERE
-	// First of all do some syntax checking. 
-	// If the syntax check fails return 1
-	// else find the job in the job list 
-  	// If job not found return 1
-	// If strcmp(newJob.progs[0].argv[0] == "f"
-	// then put the job you found in the foreground (use tcsetpgrp)
-	// Don't forget to update the fg field in jobList
-	// In any case restart the processes in the job by calling 
-	// kill(-job->pgrp, SIGCONT). Don't forget to set isStopped = 0   
-	// in every proicess and stoppedProgs = 0 in the job
+        // First of all do some syntax checking.
+        // If the syntax check fails return 1
+        if (!IsSyntaxValid(newJob.progs[0].argv[1])) { return 1; }
+
+        // else find the job in the job list
+        char* jobIdxStr = newJob.progs[0].argv[1] + 1;
+        jobNum = atoi(jobIdxStr);
+        job = GetJobFromJobId(jobNum ,jobList);
+
+        // If job not found return 1
+        if (!job) { return 1; }
+
+        // If strcmp(newJob.progs[0].argv[0] == "f"
+        // then put the job you found in the foreground (use tcsetpgrp)
+        // Don't forget to update the fg field in jobList
+        if (strcmp(newJob.progs[0].argv[0], "f")) {
+            jobList->fg = job;
+            if (tcsetpgrp(0, job->pgrp)) {
+                perror("tcsetpgrp failed");
+                exit(1);
+            }
+        }
+
+        // In any case restart the processes in the job by calling
+        // kill(-job->pgrp, SIGCONT). Don't forget to set isStopped = 0
+        // in every proicess and stoppedProgs = 0 in the job
+        kill(job->pgrp, SIGCONT);
+        job->stoppedProgs = 0;
+        for (int progIdx = 0 ; progIdx < job->numProgs; progIdx++) {
+            job->progs[progIdx] = 0;
+        }
 
         return 0;
     }
