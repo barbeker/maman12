@@ -339,7 +339,7 @@ int runCommand(struct job newJob, struct jobSet * jobList,
         free(buf);
         return 0;
     } else if (!strcmp(newJob.progs[0].argv[0], "cd")) {
-        if (!newJob.progs[0].argv[1] == 1) 
+        if (!newJob.progs[0].argv[1])
             newdir = getenv("HOME");
         else 
             newdir = newJob.progs[0].argv[1];
