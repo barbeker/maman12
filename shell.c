@@ -50,7 +50,7 @@ struct job {
 };
 
 
-struct job* GetJobByJobId(int _jobId, struct jobSet _jobSet) {
+struct job* GetJobByJobId(int _jobId, struct jobSet* _jobSet) {
     struct job* _job = NULL;
     for (struct job* jobIter = _jobSet->head; jobIter; jobIter = jobIter->next) {
         if (jobIter->jobId == _jobId) {
@@ -63,14 +63,14 @@ struct job* GetJobByJobId(int _jobId, struct jobSet _jobSet) {
 
 bool IsSyntaxValid(char* str) {
     if (!str) { return false; }
-    if (strcmp(str[0], "%") { return false; }
+    if (str[0] != "%") { return false; }
     
     char* jobIdStr = str + 1;
     int jobIdStrLen = strlen(jobIdStr);
     if (jobIdStrLen == 0) { return false; }
     
     for(int jobIdStrIter = 0; jobIdStrIter < jobIdStrLen; jobIdStrIter++) {
-	if (!isdigfit(jobIdStr[jobIdStrIter]) { return false; }
+	if (!isdigit(jobIdStr[jobIdStrIter])) { return false; }
     }
     return true;
 
@@ -374,7 +374,7 @@ int runCommand(struct job newJob, struct jobSet * jobList,
         // If strcmp(newJob.progs[0].argv[0] == "f"
         // then put the job you found in the foreground (use tcsetpgrp)
         // Don't forget to update the fg field in jobList
-        if (strcmp(newJob.progs[0].argv[0], "f")) {
+        if (newJob.progs[0].argv[0] == "f") {
             jobList->fg = job;
             if (tcsetpgrp(0, job->pgrp)) {
                 perror("tcsetpgrp failed");
@@ -388,7 +388,7 @@ int runCommand(struct job newJob, struct jobSet * jobList,
         kill(job->pgrp, SIGCONT);
         job->stoppedProgs = 0;
         for (int progId = 0 ; progId < job->numProgs; progId++) {
-            job->progs[progId] = 0;
+            job->progs[progId].isStopped = 0;
         }
 
         return 0;
