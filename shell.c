@@ -63,7 +63,7 @@ struct job* GetJobByJobId(int _jobId, struct jobSet* _jobSet) {
 
 bool IsSyntaxValid(char* str) {
     if (!str) { return false; }
-    if (str[0] != "%") { return false; }
+    if (str[0] != '%') { return false; }
     
     char* jobIdStr = str + 1;
     int jobIdStrLen = strlen(jobIdStr);
@@ -372,7 +372,7 @@ int runCommand(struct job newJob, struct jobSet * jobList,
         // If strcmp(newJob.progs[0].argv[0] == "f"
         // then put the job you found in the foreground (use tcsetpgrp)
         // Don't forget to update the fg field in jobList
-        if (newJob.progs[0].argv[0][0] == "f") {
+        if (newJob.progs[0].argv[0][0] == 'f') {
             jobList->fg = job;
             if (tcsetpgrp(0, job->pgrp)) {
                 perror("tcsetpgrp failed");
