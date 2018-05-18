@@ -159,11 +159,10 @@ void globLastArgument(struct childProgram * prog, int * argcPtr,
 int parseCommand(char ** commandPtr, struct job * job, int * isBg) {
     char * command;
     char * returnCommand = NULL;
-    char * src, * buf, * chptr;
+    char * src, * buf;
     int argc = 0;
     int done = 0;
     int argvAlloced;
-    int i;
     char quote = '\0';  
     int count;
     struct childProgram * prog;
@@ -227,12 +226,11 @@ int parseCommand(char ** commandPtr, struct job * job, int * isBg) {
                 /* +1 here leaves room for the NULL which ends argv */
                 if ((argc + 1) == argvAlloced) {
                     argvAlloced += 5;
-                    prog->argv = realloc(prog->argv, 
-                    sizeof(*prog->argv) * argvAlloced);
+                    prog->argv = realloc(prog->argv, sizeof(*prog->argv) * argvAlloced);
                 }
                 prog->argv[argc] = buf;
 
-                globLastArguIsSyntaxValidment(prog, &argc, &argvAlloced);
+                globLastArgument(prog, &argc, &argvAlloced);
             }
         } else switch (*src) {
 
@@ -374,7 +372,7 @@ int runCommand(struct job newJob, struct jobSet * jobList,
         // If strcmp(newJob.progs[0].argv[0] == "f"
         // then put the job you found in the foreground (use tcsetpgrp)
         // Don't forget to update the fg field in jobList
-        if (newJob.progs[0].argv[0] == "f") {
+        if (newJob.progs[0].argv[0][0] == "f") {
             jobList->fg = job;
             if (tcsetpgrp(0, job->pgrp)) {
                 perror("tcsetpgrp failed");
