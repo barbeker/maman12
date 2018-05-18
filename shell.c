@@ -13,6 +13,7 @@
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #define MAX_COMMAND_LEN 250     /* max length of a single command 
                                    string */
@@ -58,6 +59,21 @@ struct job* GetJobByJobId(int _jobId, struct jobSet _jobSet) {
         }
     }
     return _job;
+}
+
+bool IsSyntaxValid(char* str) {
+    if (!str) { return false; }
+    if (strcmp(str[0], "%") { return false; }
+    
+    char* jobIdStr = str + 1;
+    int jobIdStrLen = strlen(jobIdStr);
+    if (jobIdStrLen == 0) { return false; }
+    
+    for(int jobIdStrIter = 0; jobIdStrIter < jobIdStrLen; jobIdStrIter++) {
+	if (!isdigfit(jobIdStr[jobIdStrIter]) { return false; }
+    }
+    return true;
+
 }
 
 void freeJob(struct job * cmd) {
@@ -216,7 +232,7 @@ int parseCommand(char ** commandPtr, struct job * job, int * isBg) {
                 }
                 prog->argv[argc] = buf;
 
-                globLastArgument(prog, &argc, &argvAlloced);
+                globLastArguIsSyntaxValidment(prog, &argc, &argvAlloced);
             }
         } else switch (*src) {
 
@@ -371,8 +387,8 @@ int runCommand(struct job newJob, struct jobSet * jobList,
         // in every proicess and stoppedProgs = 0 in the job
         kill(job->pgrp, SIGCONT);
         job->stoppedProgs = 0;
-        for (int progIdx = 0 ; progIdx < job->numProgs; progIdx++) {
-            job->progs[progIdx] = 0;
+        for (int progId = 0 ; progId < job->numProgs; progId++) {
+            job->progs[progId] = 0;
         }
 
         return 0;
